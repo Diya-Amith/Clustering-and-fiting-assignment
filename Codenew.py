@@ -1,4 +1,4 @@
-
+# Import necessary libraries
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -118,7 +118,7 @@ def curve(x, a, b, c):
     return a * np.exp(b * (x - x.iloc[0])) + c
 
 
-# Function to fit and plot the curve 
+# Function to fit and plot the curve
 def fit_and_plot_curve(data, country_name, x_column, y_column):
     country_data = data[data['Country Name'] == country_name]
     years = country_data[x_column].astype(int)
@@ -143,7 +143,7 @@ def fit_and_plot_curve(data, country_name, x_column, y_column):
     plt.show()
 
 
-# Function to fit and plot the curve with confidence range 
+# Function to fit and plot the curve with confidence range
 def fit_and_plot_curve_confidence_range(data, country_name, x_column, y_column):
     country_data = data[data['Country Name'] == country_name]
     years = country_data[x_column].astype(int)
@@ -153,7 +153,7 @@ def fit_and_plot_curve_confidence_range(data, country_name, x_column, y_column):
     curve_params, cov_matrix = curve_fit(curve, years, emissions, maxfev=1000)
     prediction_years = pd.Series(range(1990, 2031))
     predicted_emissions = curve(prediction_years, *curve_params)
-    
+
     # Estimate confidence intervals
     perr = np.sqrt(np.diag(cov_matrix))
     lower_bound = curve(prediction_years, *(curve_params - perr))
