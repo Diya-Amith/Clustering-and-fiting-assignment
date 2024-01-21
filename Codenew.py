@@ -11,11 +11,31 @@ from yellowbrick.cluster import SilhouetteVisualizer
 
 # Function to load data from a CSV file
 def get_data(file_path):
+    """
+    Load data from a CSV file.
+
+    Parameters:
+    - file_path (str): Path to the CSV file.
+
+    Returns:
+    - pd.DataFrame: Loaded DataFrame.
+    """
     return pd.read_csv(file_path)
 
 
 # Function to preprocess the data (
 def preprocess_data(data):
+    """
+    Preprocess the data by melting, pivoting, and imputing missing values.
+
+    Parameters:
+    - data (pd.DataFrame): Input DataFrame.
+
+    Returns:
+    - pd.DataFrame: Processed DataFrame.
+    - pd.DataFrame: Normalized DataFrame.
+    """
+
     # Melt the data for easier manipulation
     data_melted = data.melt(id_vars=['Country Name', 'Country Code',
                             'Series Name', 'Series Code'], var_name='Year', value_name='Value')
@@ -57,6 +77,17 @@ def preprocess_data(data):
 
 # Function to perform clustering using KMeans
 def perform_clustering(normalized_data, num_clusters=4):
+    """
+    Perform clustering using KMeans.
+
+    Parameters:
+    - normalized_data (pd.DataFrame): Normalized DataFrame.
+    - num_clusters (int): Number of clusters for KMeans.
+
+    Returns:
+    - pd.DataFrame: Clustered DataFrame.
+    - sklearn.cluster.KMeans: KMeans model.
+    """
     # Create KMeans model
     kmeans = KMeans(n_clusters=num_clusters, random_state=42)
     clustered_data = normalized_data.copy()
@@ -79,6 +110,17 @@ def perform_clustering(normalized_data, num_clusters=4):
 
 # Function to visualize clusters CO2 and GDP
 def visualize_clusters(clustered_data, kmeans, features=['GDP growth (annual %)', 'CO2 emissions (kt)']):
+    """
+   Visualize clusters based on GDP and CO2 emissions.
+
+   Parameters:
+   - clustered_data (pd.DataFrame): Clustered DataFrame.
+   - kmeans (sklearn.cluster.KMeans): KMeans model.
+   - features (list): List of two feature names for plotting.
+
+   Returns:
+   - None
+   """
     plt.figure(figsize=(10, 8))
     for cluster in clustered_data['Cluster'].unique():
         cluster_data = clustered_data[clustered_data['Cluster'] == cluster]
@@ -97,6 +139,17 @@ def visualize_clusters(clustered_data, kmeans, features=['GDP growth (annual %)'
 
 # Additional cluster visualization Greenhouse and CO2
 def visualize_clusters_custom(clustered_data, kmeans, features=['Total greenhouse gas emissions (kt of CO2 equivalent)', 'CO2 emissions (kt)']):
+    """
+    Additional cluster visualization based on Greenhouse gas emission and CO2
+
+    Parameters:
+    - clustered_data (pd.DataFrame): Clustered DataFrame.
+    - kmeans (sklearn.cluster.KMeans): KMeans model.
+    - features (list): List of two feature names for plotting.
+
+    Returns:
+    - None
+    """
     plt.figure(figsize=(10, 8))
     for cluster in clustered_data['Cluster'].unique():
         cluster_data = clustered_data[clustered_data['Cluster'] == cluster]
@@ -115,11 +168,33 @@ def visualize_clusters_custom(clustered_data, kmeans, features=['Total greenhous
 
 # Function to define the exponential curve
 def curve(x, a, b, c):
+    """
+    Exponential curve function.
+
+    Parameters:
+    - x (pd.Series): Input data.
+    - a, b, c (float): Curve parameters.
+
+    Returns:
+    - pd.Series: Exponential curve.
+    """
     return a * np.exp(b * (x - x.iloc[0])) + c
 
 
 # Function to fit and plot the curve
 def fit_and_plot_curve(data, country_name, x_column, y_column):
+    """
+    Fit and plot exponential curve.
+
+    Parameters:
+    - data (pd.DataFrame): DataFrame containing the data.
+    - country_name (str): Name of the country.
+    - x_column (str): Name of the x-axis column.
+    - y_column (str): Name of the y-axis column.
+
+    Returns:
+    - None
+    """
     country_data = data[data['Country Name'] == country_name]
     years = country_data[x_column].astype(int)
     emissions = country_data[y_column].astype(float)
@@ -145,6 +220,18 @@ def fit_and_plot_curve(data, country_name, x_column, y_column):
 
 # Function to fit and plot the curve with confidence range
 def fit_and_plot_curve_confidence_range(data, country_name, x_column, y_column):
+    """
+    Fit and plot exponential curve with confidence range.
+
+    Parameters:
+    - data (pd.DataFrame): DataFrame containing the data.
+    - country_name (str): Name of the country.
+    - x_column (str): Name of the x-axis column.
+    - y_column (str): Name of the y-axis column.
+
+    Returns:
+    - None
+    """
     country_data = data[data['Country Name'] == country_name]
     years = country_data[x_column].astype(int)
     emissions = country_data[y_column].astype(float)
@@ -177,11 +264,27 @@ def fit_and_plot_curve_confidence_range(data, country_name, x_column, y_column):
 
 # Function to estimate confidence intervals for curve parameters
 def err_ranges(x, a, b, c, delta_a, delta_b, delta_c):
+    """
+    Function to estimate confidence intervals for curve parameters.
+
+    Parameters:
+    - x (pd.Series): Input data.
+    - a, b, c, delta_a, delta_b, delta_c (float): Curve parameters.
+
+    Returns:
+    - pd.Series: Estimated curve with confidence intervals.
+    """
     return a * np.exp(b * (x - x.iloc[0])) + c + delta_a * np.exp(delta_b * (x - x.iloc[0])) + delta_c
 
 
 # Main function to execute the entire analysis
 def main():
+    """
+    Main function to execute the entire analysis.
+
+    Returns:
+    - None
+    """
     # Load data
     cf_data = get_data('CFData.csv')
 
